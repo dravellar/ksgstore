@@ -80,7 +80,7 @@ Resources:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref VPC
+      VpcId: "vpc-052e207ae8310cbd4"
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Routes
