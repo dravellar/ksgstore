@@ -156,6 +156,9 @@ Resources:
         KeyName: dravellamarkey
         SecurityGroupIds:
           - !Ref InstanceSecurityGroup
+        Tags:
+          - Key: Name
+            Value: !Sub ksgproject-${CIRCLE_WORKFLOW_ID:0:7}
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
