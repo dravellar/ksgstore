@@ -66,29 +66,6 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
-  NatGateway1EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-
-  NatGateway2EIP:
-    Type: AWS::EC2::EIP
-    DependsOn: InternetGatewayAttachment
-    Properties:
-      Domain: vpc
-
-  NatGateway1:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway1EIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
-
-  NatGateway2:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway2EIP.AllocationId
-      SubnetId: !Ref PublicSubnet2
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -158,15 +135,14 @@ Resources:
       ImageId: ami-007855ac798b5175e
       KeyName: dravellamarkey
       SecurityGroups:
-      - Ref: InstanceSecurityGroup
+      - !Ref InstanceSecurityGroup
       InstanceType: t2.micro
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
       VPCZoneIdentifier: [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]
-      LaunchConfigurationName:
-        Ref: WebAppLaunchConfig
+      LaunchConfigurationName: !Ref WebAppLaunchConfig
       MinSize: '3'
       MaxSize: '5'
 
@@ -177,7 +153,7 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
       SecurityGroups:
-      - Ref: LBSecGroup
+      - !Ref LBSecGroup
 
   Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -185,9 +161,9 @@ Resources:
       DefaultActions:
       - Type: forward
         TargetGroupArn:
-          Ref: WebAppTargetGroup
+          !Ref WebAppTargetGroup
       LoadBalancerArn:
-        Ref: WebAppLB
+        !Ref WebAppLB
       Port: '80'
       Protocol: HTTP
 
