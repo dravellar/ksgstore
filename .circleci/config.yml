@@ -214,7 +214,7 @@ workflows:
               only: [main]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - deploy-project:
+      - deploy-backend:
           requires: [build-project]
       - smoke-test:
           requires: [deploy-backend]
