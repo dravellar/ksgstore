@@ -46,6 +46,7 @@ jobs:
           name: Build project
           command: |
             # Your code here
+            ls
             cd ksgstore/myapp/app
             pip install -r requirements.txt
             python manage.py runserver
