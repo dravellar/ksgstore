@@ -12,8 +12,8 @@
     state: latest
     update_cache: yes
 
-- name: "move en variable to /etc/profile.d/"
-  become: true
-  copy:
-    src: ../files/myenv.sh
-    dest: /etc/profile.d/
+# - name: "move en variable to /etc/profile.d/"
+#   become: true
+#   copy:
+#     src: ../files/myenv.sh
+#     dest: /etc/profile.d/

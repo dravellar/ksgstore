@@ -34,8 +34,6 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            aws s3 rm s3://ksgproject-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name "ksgproject-<<parameters.workflow_id>>"
 
 jobs:
@@ -57,10 +55,6 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run:
-          name: Install tar utility
-          command: |
-            yum install -y tar gzip
       - run:
           name: Ensure project infrastructure exists
           command: |
@@ -98,7 +92,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "3d:9f:18:e5:e7:4b:d3:34:fb:ad:76:0c:65:a5:f1:da"
+            - "cb:36:fd:30:64:b5:26:f2:45:b0:2b:8e:f4:1f:6a:38"
       - attach_workspace:
           at: ~/
       
@@ -120,7 +114,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "3d:9f:18:e5:e7:4b:d3:34:fb:ad:76:0c:65:a5:f1:da"
+            - "cb:36:fd:30:64:b5:26:f2:45:b0:2b:8e:f4:1f:6a:38"
       - attach_workspace:
           at: ~/
       - install_awscli
@@ -166,21 +160,21 @@ jobs:
               fi
       - destroy-environment
   
-  cloudfront-update:
-    docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
-    steps:
-      # Checkout code from git
-      - checkout
-      - run:
-          name: Update cloudfront distribution
-          command: |
-            aws cloudformation deploy \
-            --template-file .circleci/files/cloudfront.yml \
-            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-            --stack-name InitialStack
-      - destroy-environment
+  # cloudfront-update:
+  #   docker:
+  #     # Docker image here that supports AWS CLI
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     # Checkout code from git
+  #     - checkout
+  #     - run:
+  #         name: Update cloudfront distribution
+  #         command: |
+  #           aws cloudformation deploy \
+  #           --template-file .circleci/files/cloudfront.yml \
+  #           --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+  #           --stack-name InitialStack
+  #     - destroy-environment
 
   # cleanup:
   #   docker:
@@ -224,7 +218,7 @@ workflows:
           requires: [build-project]
       - smoke-test:
           requires: [deploy-backend]
-      - cloudfront-update:
-          requires: [smoke-test]
+      # - cloudfront-update:
+      #     requires: [smoke-test]
       # - cleanup:
       #     requires: [cloudfront-update]
