@@ -19,7 +19,7 @@
     sudo apt install git
     git clone https://github.com/dravellar/ksgstore.git
     cd ksgstore
-    sudo docker compose up
+    sudo docker compose up -d
 
 # - name: "move en variable to /etc/profile.d/"
 #   become: true
