@@ -152,7 +152,6 @@ Resources:
         LaunchTemplateId: !Ref WebAppLaunchConfig
       MinSize: '3'
       MaxSize: '5'
-      SecurityGroups: [!Ref InstanceSecurityGroup, !Ref LBSecGroup]
 
   WebAppLB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
