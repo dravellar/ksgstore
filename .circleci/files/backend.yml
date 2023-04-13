@@ -6,19 +6,32 @@ Parameters:
     Description: The name of the environment
     Type: String
     Default: Ksgproject
+  VpcCIDR:
+    Description: IP range (CIDR Notation)
+    Type: String
+    Default: 10.0.0.0/16
   ID:
     Description: Unique identifier.
     Type: String
   PublicSubnet1CIDR:
     Description: IP range (CIDR Notation)
     Type: String
-    Default: 172.31.96.0/20
+    Default: 10.0.0.0/24
   PublicSubnet2CIDR:
     Description: IP range (CIDR Notation)
     Type: String
-    Default: 172.31.132.0/20
+    Default: 10.0.1.0/24
 
 Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCIDR
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Ref EnvironmentName
+
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
@@ -30,12 +43,12 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [0, !GetAZs '']
       CidrBlock: !Ref PublicSubnet1CIDR
       MapPublicIpOnLaunch: true
@@ -46,7 +59,7 @@ Resources:
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
       AvailabilityZone: !Select [1, !GetAZs '']
       CidrBlock: !Ref PublicSubnet2CIDR
       MapPublicIpOnLaunch: true
@@ -80,7 +93,7 @@ Resources:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
       Tags:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Routes
@@ -108,7 +121,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow http to our load balancer
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
@@ -201,7 +214,7 @@ Resources:
       Port: 8000
       Protocol: HTTP
       UnhealthyThresholdCount: 5
-      VpcId: "vpc-052e207ae8310cbd4"
+      VpcId: !Ref VPC
 
   # EC2Instance:
   #   Type: AWS::EC2::Instance
