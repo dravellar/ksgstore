@@ -126,6 +126,7 @@ jobs:
       - run:
           name: Deploy backend
           command: |
+            sudo snap install docker
             sudo docker compose up
             cd .circleci/ansible
             # mkdir files
