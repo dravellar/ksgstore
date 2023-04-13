@@ -134,7 +134,8 @@ Resources:
     Properties:
       ImageId: ami-007855ac798b5175e
       KeyName: dravellamarkey
-      SecurityGroups: !Ref InstanceSecurityGroup
+      SecurityGroups: 
+        - !Ref InstanceSecurityGroup
       InstanceType: t2.micro
 
   WebAppGroup:
