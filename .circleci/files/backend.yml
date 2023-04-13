@@ -12,11 +12,11 @@ Parameters:
   PublicSubnet1CIDR:
     Description: IP range (CIDR Notation)
     Type: String
-    Default: 10.0.0.0/24
+    Default: 172.31.0.0/20
   PublicSubnet2CIDR:
     Description: IP range (CIDR Notation)
     Type: String
-    Default: 10.0.1.0/24
+    Default: 172.31.16.0/20
 
 Resources:
   InternetGateway:
