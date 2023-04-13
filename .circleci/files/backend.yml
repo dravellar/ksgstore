@@ -147,9 +147,6 @@ Resources:
       SecurityGroups:
       - Ref: InstanceSecurityGroup
       InstanceType: t2.micro
-      Tags:
-        - Key: Name
-          Value: !Sub ksgproject-${ID}
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
