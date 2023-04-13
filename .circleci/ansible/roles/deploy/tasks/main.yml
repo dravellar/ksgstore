@@ -11,7 +11,7 @@
 
 - name: "Installing Project Dependencies and Running"
   shell: |
-    cd ksgstore
+    sudo snap install docker
     sudo docker compose up
 # - name: "Executing Node app with PM2"
 #   shell: |
