@@ -1,0 +1,230 @@
+version: 2.1
+
+commands:
+  install_awscli:
+    description: Install AWS cli
+    steps:
+      - run:
+          name: Install AWS cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      # Add parameter here
+      workflow_id:
+        default: "${CIRCLE_WORKFLOW_ID:0:7}"
+        type: string
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            # Your code here
+            aws s3 rm s3://ksgproject-<<parameters.workflow_id>> --recursive
+            aws cloudformation delete-stack --stack-name "ksgproject-<<parameters.workflow_id>>"
+
+jobs:
+  build-project:
+    docker:
+      - image: cimg/python:3.11.3
+    steps:
+      - checkout
+      - run:
+          name: Build project
+          command: |
+            # Your code here
+            cd ksgstore/myapp/app
+            pip install -r requirements.txt
+            python manage.py runserver
+
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install tar utility
+          command: |
+            yum install -y tar gzip
+      - run:
+          name: Ensure project infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=ksgproject \
+              --stack-name "ksgproject-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text --filter Name=tag:Name,Values=ksgproject-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
+            cat inventory.txt
+            # export BACKEND_IP=$(aws ec2 describe-instances \
+            #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            #   --output text --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7})
+            # echo $(BACKEND_IP)
+            # Your code here
+        
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      # Here's where you will add some code to rollback on failure      
+
+  configure-infrastructure:
+    docker:
+      # Docker image here that supports Ansible
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "3d:9f:18:e5:e7:4b:d3:34:fb:ad:76:0c:65:a5:f1:da"
+      - attach_workspace:
+          at: ~/
+      
+      - install_ansible
+      - install_awscli
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment     
+
+  deploy-backend:
+    docker:
+      # Docker image here that supports Ansible
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "3d:9f:18:e5:e7:4b:d3:34:fb:ad:76:0c:65:a5:f1:da"
+      - attach_workspace:
+          at: ~/
+      - install_awscli
+      - install_ansible
+
+      - run:
+          name: Deploy backend
+          command: |
+            sudo docker compose up
+            cd .circleci/ansible
+            # mkdir files
+            # tar -C ../../backend/ -czvf artifact.tar.gz .
+            # echo "Contents of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment
+
+  smoke-test:
+    docker:
+      # Lightweight Docker image
+      - image: cimg/base:stable
+    steps:
+      # Checkout code from git
+      - checkout
+      - install_awscli
+
+      - run:
+          name: Backend smoke test.
+          command: |
+              BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+                --filters "Name=tag:Name,Values=ksgproject-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --output text)
+              export API_URL=http://${BACKEND_PUBLIC_IP}:8000
+              echo ${BACKEND_PUBLIC_IP}
+              echo backend-${CIRCLE_WORKFLOW_ID:0:7}
+              echo ${API_URL}
+              if curl -s $API_URL/api/status | grep "ok"
+              then
+                exit 0
+              else
+                exit 1
+              fi
+      - destroy-environment
+  
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --stack-name InitialStack
+      - destroy-environment
+
+  # cleanup:
+  #   docker:
+  #     # Docker image here
+  #     - image: cimg/base:stable
+  #   steps:
+  #     # Checkout code from git
+  #     - checkout
+  #     - install_awscli
+  #     - run:
+  #         name: Get old stack workflow id
+  #         command: |
+  #           export STACKS=($(aws cloudformation list-stacks \
+  #             --query "StackSummaries[*].StackName" \
+  #             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+  #           echo Stack names: "${STACKS[@]}"
+  #     - run:
+  #         name: Remove old stacks and files
+  #         command: |
+  #           export OldWorkflowID=$(curl --insecure https://kvdb.io/5jQj8XAyZh31vVvThwW81u/old_workflow_id)
+  #           echo Old Workflow ID: $OldWorkflowID
+
+  #           if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+  #           then
+  #             aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+  #             aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+  #             aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+  #           fi
+
+workflows:
+  default:
+    jobs:
+      - build-project
+      - deploy-infrastructure:
+          filters:
+            branches:
+              only: [main]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
+      - deploy-project:
+          requires: [build-project]
+      - smoke-test:
+          requires: [deploy-backend]
+      - cloudfront-update:
+          requires: [smoke-test]
+      # - cleanup:
+      #     requires: [cloudfront-update]

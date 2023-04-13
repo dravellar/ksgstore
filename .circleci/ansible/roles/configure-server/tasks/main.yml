@@ -1,0 +1,19 @@
+---
+
+- name: "Install Docker"
+  become: true
+  shell: |
+    sudo snap install docker
+
+- name: "Install Pip3"
+  become: true
+  apt:
+    name: ["python3-pip"]
+    state: latest
+    update_cache: yes
+
+- name: "move en variable to /etc/profile.d/"
+  become: true
+  copy:
+    src: ../files/myenv.sh
+    dest: /etc/profile.d/
