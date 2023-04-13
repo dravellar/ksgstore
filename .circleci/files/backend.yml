@@ -33,12 +33,3 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ksgproject-${ID}
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          sudo apt-get update
-          sudo snap install docker
-          sudo apt install git
-          git clone https://github.com/dravellar/ksgstore.git
-          cd ksgstore
-          sudo docker compose up

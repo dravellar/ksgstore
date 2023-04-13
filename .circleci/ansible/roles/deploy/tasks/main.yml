@@ -11,7 +11,11 @@
 
 - name: "Installing Project Dependencies and Running"
   shell: |
+    sudo apt-get update
     sudo snap install docker
+    sudo apt install git
+    git clone https://github.com/dravellar/ksgstore.git
+    cd ksgstore
     sudo docker compose up
 # - name: "Executing Node app with PM2"
 #   shell: |
