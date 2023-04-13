@@ -66,34 +66,6 @@ jobs:
               --tags project=ksgproject \
               --stack-name "ksgproject-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-      # - run:
-      #     name: Add back-end ip to ansible inventory
-      #     command: |
-      #       cd .circleci/ansible
-      #       cat inventory.txt
-      #       aws ec2 describe-instances \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --output text --filter Name=tag:Name,Values=ksgproject-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
-      #       cat inventory.txt
-      #       # export BACKEND_IP=$(aws ec2 describe-instances \
-      #       #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #       #   --output text --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7})
-      #       # echo $(BACKEND_IP)
-      #       # Your code here
-        
-      # - persist_to_workspace:
-      #     root: ~/
-      #     paths:
-      #       - project/.circleci/ansible/inventory.txt
-  write-ansiblefile:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Install tar utility
-          command: |
-            yum install -y tar gzip
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -241,8 +213,6 @@ workflows:
           filters:
             branches:
               only: [main]
-      - write-ansiblefile:
-          requires: [deploy-infrastructure]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - deploy-backend:
