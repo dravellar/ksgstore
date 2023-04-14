@@ -76,7 +76,7 @@ jobs:
             cat inventory.txt
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text --filter Name=tag:Name,Values=ksgproject-042023 >> inventory.txt
+              --output text --filter Name=tag:Name,Values=ksgproject-0420231 >> inventory.txt
             cat inventory.txt
             # export BACKEND_IP=$(aws ec2 describe-instances \
             #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
