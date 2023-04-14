@@ -157,7 +157,7 @@ Resources:
         SecurityGroupIds:
           - !Ref InstanceSecurityGroup
       TagSpecifications:
-        - ResourceType: instance
+        - ResourceType: launch-template
           Tags:
           - Key: Name
             Value: ksgproject-042023
