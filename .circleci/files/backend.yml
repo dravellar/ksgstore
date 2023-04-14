@@ -156,9 +156,9 @@ Resources:
         KeyName: dravellamarkey
         SecurityGroupIds:
           - !Ref InstanceSecurityGroup
-        Tags:
-          - Key: Name
-            Value: !Sub ksgproject-042023
+      TagSpecifications:
+        - Key: Name
+          Value: !Sub ksgproject-042023
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
