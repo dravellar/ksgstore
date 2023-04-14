@@ -142,15 +142,7 @@ Resources:
         FromPort: 0
         ToPort: 65535
         CidrIp: 0.0.0.0/0
-  
-  # WebAppLaunchConfig:
-  #   Type: AWS::AutoScaling::LaunchConfiguration
-  #   Properties:
-  #     ImageId: ami-007855ac798b5175e
-  #     KeyName: dravellamarkey
-  #     SecurityGroups:
-  #       - !Ref InstanceSecurityGroup
-  #     InstanceType: t2.micro
+
   WebAppLaunchConfig:
     Type: AWS::EC2::LaunchTemplate
     Properties:
@@ -227,15 +219,3 @@ Resources:
       Protocol: HTTP
       UnhealthyThresholdCount: 5
       VpcId: !Ref VPC
-
-  # EC2Instance:
-  #   Type: AWS::EC2::Instance
-  #   Properties:
-  #     InstanceType: t2.micro
-  #     SecurityGroups:
-  #       - Ref: InstanceSecurityGroup
-  #     KeyName: dravellamarkey
-  #     ImageId: ami-007855ac798b5175e 
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Sub ksgproject-${ID}

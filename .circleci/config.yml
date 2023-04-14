@@ -48,9 +48,6 @@ jobs:
             # Your code here
             cd myapp/app
             pip install -r requirements.txt
-      # - run:
-      #     name: Set CircleCI environment variable
-      #     command: echo 'CIRCLECI_WORKID=${CIRCLE_WORKFLOW_ID:0:7}' >> $BASH_ENV
 
   deploy-infrastructure:
     docker:
@@ -82,16 +79,6 @@ jobs:
             for IP_ADDRESS in ${IP_ADDRESSES}; do
               echo "${IP_ADDRESS}" >> inventory.txt
             done
-
-            # aws ec2 describe-instances \
-            #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            #   --output text --filter Name=tag:Name,Values=ksgproject-0420231 >> inventory.txt
-            # cat inventory.txt
-            # export BACKEND_IP=$(aws ec2 describe-instances \
-            #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            #   --output text --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7})
-            # echo $(BACKEND_IP)
-            # Your code here
         
       - persist_to_workspace:
           root: ~/
@@ -172,50 +159,6 @@ jobs:
                 exit 1
               fi
       - destroy-environment
-  
-  # cloudfront-update:
-  #   docker:
-  #     # Docker image here that supports AWS CLI
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     # Checkout code from git
-  #     - checkout
-  #     - run:
-  #         name: Update cloudfront distribution
-  #         command: |
-  #           aws cloudformation deploy \
-  #           --template-file .circleci/files/cloudfront.yml \
-  #           --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
-  #           --stack-name InitialStack
-  #     - destroy-environment
-
-  # cleanup:
-  #   docker:
-  #     # Docker image here
-  #     - image: cimg/base:stable
-  #   steps:
-  #     # Checkout code from git
-  #     - checkout
-  #     - install_awscli
-  #     - run:
-  #         name: Get old stack workflow id
-  #         command: |
-  #           export STACKS=($(aws cloudformation list-stacks \
-  #             --query "StackSummaries[*].StackName" \
-  #             --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-  #           echo Stack names: "${STACKS[@]}"
-  #     - run:
-  #         name: Remove old stacks and files
-  #         command: |
-  #           export OldWorkflowID=$(curl --insecure https://kvdb.io/5jQj8XAyZh31vVvThwW81u/old_workflow_id)
-  #           echo Old Workflow ID: $OldWorkflowID
-
-  #           if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-  #           then
-  #             aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-  #             aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-  #             aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-  #           fi
 
 workflows:
   default:
@@ -229,9 +172,3 @@ workflows:
           requires: [deploy-infrastructure]
       - deploy-backend:
           requires: [build-project]
-      # - smoke-test:
-      #     requires: [deploy-backend]
-      # - cloudfront-update:
-      #     requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
