@@ -74,10 +74,19 @@ jobs:
           command: |
             cd .circleci/ansible
             cat inventory.txt
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text --filter Name=tag:Name,Values=ksgproject-0420231 >> inventory.txt
-            cat inventory.txt
+            #!/bin/bash
+            # Run describe-instances command and parse IP addresses
+            IP_ADDRESSES=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values=ksgproject-04202312)
+
+            # Loop through the IP addresses and append them to the inventory.txt file
+            for IP_ADDRESS in ${IP_ADDRESSES}; do
+              echo "${IP_ADDRESS}" >> inventory.txt
+            done
+
+            # aws ec2 describe-instances \
+            #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            #   --output text --filter Name=tag:Name,Values=ksgproject-0420231 >> inventory.txt
+            # cat inventory.txt
             # export BACKEND_IP=$(aws ec2 describe-instances \
             #   --query 'Reservations[*].Instances[*].PublicIpAddress' \
             #   --output text --filter Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7})
