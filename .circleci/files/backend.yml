@@ -123,11 +123,15 @@ Resources:
     Properties:
       GroupName: !Sub ksgproject-${ID}
       VpcId: !Ref VPC
-      GroupDescription: Allow port 22 and port 3030.
+      GroupDescription: Allow port 22 and port 8000.
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 8000
@@ -160,7 +164,7 @@ Resources:
           - ResourceType: instance
             Tags:
             - Key: Name
-              Value: ksgproject-0420231234
+              Value: ksgproject-042023
       TagSpecifications:
         - ResourceType: launch-template
           Tags:
@@ -176,6 +180,7 @@ Resources:
         Version: !GetAtt WebAppLaunchConfig.LatestVersionNumber
       MinSize: '3'
       MaxSize: '5'
+      TargetGroupARNs: !Ref WebAppTargetGroup
 
   WebAppLB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
