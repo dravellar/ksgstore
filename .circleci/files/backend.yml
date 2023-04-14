@@ -180,7 +180,7 @@ Resources:
         Version: !GetAtt WebAppLaunchConfig.LatestVersionNumber
       MinSize: '3'
       MaxSize: '5'
-      TargetGroupARNs: !Ref WebAppTargetGroup
+      TargetGroupARNs: [!Ref WebAppTargetGroup]
 
   WebAppLB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
