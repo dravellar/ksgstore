@@ -160,7 +160,7 @@ Resources:
           - ResourceType: instance
             Tags:
             - Key: Name
-              Value: ksgproject-04202312
+              Value: ksgproject-042023123
       TagSpecifications:
         - ResourceType: launch-template
           Tags:

@@ -76,7 +76,7 @@ jobs:
             cat inventory.txt
             #!/bin/bash
             # Run describe-instances command and parse IP addresses
-            IP_ADDRESSES=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values=ksgproject-04202312)
+            IP_ADDRESSES=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text --filter Name=tag:Name,Values=ksgproject-042023123)
 
             # Loop through the IP addresses and append them to the inventory.txt file
             for IP_ADDRESS in ${IP_ADDRESSES}; do
