@@ -157,8 +157,10 @@ Resources:
         SecurityGroupIds:
           - !Ref InstanceSecurityGroup
       TagSpecifications:
-        - Key: Name
-          Value: !Sub ksgproject-042023
+        - ResourceType: instance
+            Tags:
+            - Key: Name
+              Value: ksgproject-042023
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
