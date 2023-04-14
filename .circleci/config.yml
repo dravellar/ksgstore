@@ -48,6 +48,9 @@ jobs:
             # Your code here
             cd myapp/app
             pip install -r requirements.txt
+      # - run:
+      #     name: Set CircleCI environment variable
+      #     command: echo 'CIRCLECI_WORKID=${CIRCLE_WORKFLOW_ID:0:7}' >> $BASH_ENV
 
   deploy-infrastructure:
     docker:
@@ -73,7 +76,7 @@ jobs:
             cat inventory.txt
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text --filter Name=tag:Name,Values=ksgproject-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
+              --output text --filter Name=tag:Name,Values=ksgproject-042023 >> inventory.txt
             cat inventory.txt
             # export BACKEND_IP=$(aws ec2 describe-instances \
             #   --query 'Reservations[*].Instances[*].PublicIpAddress' \

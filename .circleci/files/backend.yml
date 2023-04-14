@@ -158,7 +158,7 @@ Resources:
           - !Ref InstanceSecurityGroup
         Tags:
           - Key: Name
-            Value: !Sub ksgproject-${CIRCLE_WORKFLOW_ID:0:7}
+            Value: !Sub ksgproject-042023
 
   WebAppGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
