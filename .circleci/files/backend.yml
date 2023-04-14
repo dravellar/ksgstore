@@ -156,6 +156,11 @@ Resources:
         KeyName: dravellamarkey
         SecurityGroupIds:
           - !Ref InstanceSecurityGroup
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+            - Key: Name
+              Value: ksgproject-042023
       TagSpecifications:
         - ResourceType: launch-template
           Tags:
