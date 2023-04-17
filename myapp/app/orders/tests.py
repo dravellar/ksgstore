@@ -42,7 +42,7 @@ class OrderItemTestCase(TestCase):
         self.user.save()
         Category.objects.create(name='Electronics', slug='electronics', created_at=timezone.now(), updated_at=timezone.now())
         Product.objects.create(owner=self.user,category=Category.objects.get(id=1),name='Toaster', slug='slug',description='Amazing toaster',
-        price=49.99, available=True, rent_duration='One Day', created_at=timezone.now(), updated_at=timezone.now(), image=None)
+        price=49.99, available=True, created_at=timezone.now(), updated_at=timezone.now(), image=None)
         
         OrderItem.objects.create(
             order=Order.objects.get(id=1),

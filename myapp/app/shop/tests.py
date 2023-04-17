@@ -27,7 +27,7 @@ class ProductTestCase(TestCase):
             owner=self.user,
             category=Category.objects.get(id=1),
             name='Hat', slug='hat',description='Amazing hat',
-            price=49.99, available=True, rent_duration='One Day', 
+            price=49.99, available=True, 
             created_at=timezone.now(), updated_at=timezone.now(), 
             image=None
         )

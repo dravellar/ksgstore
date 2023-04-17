@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import OrderItem
+from shop.models import Product
+from mainapp.models import CustomUser
 from .forms import OrderCreateForm
 from cart.cart import Cart
 from django.contrib.auth.decorators import login_required
@@ -17,14 +19,23 @@ def order_create(request):
                     order=order,
                     product=item['product'],
                     price=item['price'],
-                    quantity=item['quantity']
-                ) 
+                )
+                print(item['product'])
+                the_product = get_object_or_404(Product, id=item['product'].id)
+                the_owner = get_object_or_404(CustomUser, id=the_product.owner.id)
+                the_owner.account_balance += item['price']
+                the_product.available = False
+                the_owner.save()
+                the_product.save()
             cart.clear()
-        return render(request, 'orders/order/created.html', {'order': order})
+        request.session['customer_order'] = order.id
+        return redirect('orders:order_created')
     else:
         form = OrderCreateForm()
     return render(request, 'orders/order/create.html', {'form': form})
 
+def order_created(request):
+    return render(request, 'orders/order/created.html')
 
 
 # @login_required

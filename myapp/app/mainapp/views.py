@@ -1,4 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
+from django.core import serializers
+import json
 from .forms import CustomUserCreationForm, ProfileFirstUpdateForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,7 +12,7 @@ from cart.forms import CartAddProductForm
 from django.utils import timezone
 from .models import CustomUser
 from django.utils.text import slugify
-from django.db.models import Q,F
+from django.db.models import Q
 def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
@@ -55,8 +58,6 @@ def product_list(request, category_slug=None):
         'products': products
     }
     return render(request, 'mainapp/shop.html', context)
-# def shop_view(request):
-#     return render(request, 'mainapp/shop.html')
 
 def product_detail(request, id, slug):
     related_products = Product.objects.all().order_by('created_at').reverse()[:4]
@@ -81,13 +82,25 @@ def product_create(request):
             befo.created_at = timezone.now()
             befo.save()
             return redirect('mainapp:your-account')
-
     else:
         form = ProductCreateForm()
     context = {
         'form':form,
     }
     return render(request, 'mainapp/product-create.html', context)
+
+
+def compare_products(request):
+    the_products = Product.objects.all()
+    context = {
+        'the_products':the_products
+    }
+    return render(request, 'mainapp/compare.html', context)
+
+def allproducts(request, id):
+    prods = serializers.serialize("json", Product.objects.filter(id=id))
+    thedata = json.loads(prods)
+    return JsonResponse(thedata, safe=False)
 
 
 @login_required

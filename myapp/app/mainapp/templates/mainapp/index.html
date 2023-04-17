@@ -17,102 +17,10 @@
 						<div class="text">
 							<span class="subheading">KSG Store</span>
 							<div class="horizontal">
-								<h3 class="vr" style="background-image: url(../../static/img/divider.jpg);">The Modern
-									Rentiquette</h3>
-								<h1 class="mb-4 mt-3">The Easiest Way <br><span>To Rent Anything</span></h1>
-								<p>Have unused “stuff”? Let it work for you. Upload a photo, name your price, let KSG Store
-									do the rest.</p>
-
+								<h3 class="vr" style="background-image: url(../../static/img/divider.jpg);">Welcome</h3>
+								<h1 class="mb-4 mt-3">Welcome to KSG Store. The Easiest Way <br><span>To Buy Anything</span></h1>
 								<p><a href="{% url 'mainapp:shop' %}" class="btn btn-primary px-5 py-3 mt-3">Discover
 										Now</a></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="slider-item js-fullheight">
-			<div class="overlay"></div>
-			<div class="container-fluid p-0">
-				<div class="row d-flex no-gutters slider-text js-fullheight align-items-center justify-content-end"
-					data-scrollax-parent="true">
-					<div class="one-third order-md-last img js-fullheight"
-						style="background-image:url(../../static/img/getty2.jpg);">
-					</div>
-					<div class="one-forth d-flex js-fullheight align-items-center ftco-animate"
-						data-scrollax=" properties: { translateY: '70%' }">
-						<div class="text">
-							<span class="subheading">KSG Store</span>
-							<div class="horizontal">
-								<h3 class="vr" style="background-image: url(../../static/img/divider.jpg);">The Modern
-									Rentiquette</h3>
-								<h1 class="mb-4 mt-3">Start Earning <br><span>With KSG Store</span></h1>
-								<p>Have unused “stuff”? Let it work for you. Upload a photo, name your price, let
-									KSG Store do the rest.</p>
-
-								<p><a href="{% url 'mainapp:shop' %}" class="btn btn-primary px-5 py-3 mt-3">Shop
-										Now</a></p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</section>
-
-<section class="ftco-section ftco-no-pb ftco-no-pt bg-light">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-5 p-md-5 img img-2 d-flex justify-content-center align-items-center"
-				style="background-image: url(../../static/img/getty.jpg);">
-			</div>
-			<div class="col-md-7 py-5 wrap-about pb-md-5 ftco-animate">
-				<div class="heading-section-bold mb-4 mt-md-5">
-					<div class="ml-md-0">
-						<h2 class="mb-4">Better Way to <b>Rent</b> Your Products</h2>
-					</div>
-				</div>
-				<div class="pb-md-5">
-					<p>What if we told you every single item in your house could be making you money? All you have to do
-						is list your stuff with KSG Store, tell us when it’s available, and we’ll rent it out for you.
-					</p>
-					<div class="row ftco-services">
-						<div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-							<div class="media block-6 services">
-								<div class="icon d-flex justify-content-center align-items-center mb-4">
-									<img src="{% static 'img/insurance.jpg' %}" class="img-fluid">
-									
-								</div>
-								<div class="media-body">
-									<h3 class="heading">ROBUST PLATFORM</h3>
-									<p>Breathe easy, rent easy. Rent any item that you feel like on KSG Store and let it generate income for you</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-							<div class="media block-6 services">
-								<div class="icon d-flex justify-content-center align-items-center mb-4">
-									<img src="{% static 'img/delivery.jpg' %}" class="img-fluid">
-									
-								</div>
-								<div class="media-body">
-									<h3 class="heading">AVAILABILITY</h3>
-									<p>Get the product you want at the time that you need it with KSG Store.</p>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-4 text-center d-flex align-self-stretch ftco-animate">
-							<div class="media block-6 services">
-								<div class="icon d-flex justify-content-center align-items-center mb-4">
-									<img src="{% static 'img/likes.jpg' %}" class="img-fluid">
-									<!-- <span class="flaticon-003-medal"></span> -->
-								</div>
-								<div class="media-body">
-									<h3 class="heading">PEER REVIEWS</h3>
-									<p>Self-policing ensures a good platformial experience in every rental transaction. </p>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -147,11 +55,7 @@
 						<h3><a href="{{item.get_absolute_url}}">{{item.name}}</a></h3>
 						<div class="d-flex">
 							<div class="pricing">
-								<p class="price"><span class="price-sale">US ${{item.price}}</span>  <b>&nbsp;per</b>
-									{% if item.rent_duration == "One Day" %} <b style="color:green;">Day</b>
-									{% elif item.rent_duration == "One Week" %} <b style="color:blue;">Week</b>
-									{% elif item.rent_duration == "One Month" %} <b style="color:red;">Month</b>
-									{% endif %}</p>
+								<p class="price"><span class="price-sale">US ${{item.price}}</span></p>
 							</div>
 						</div>
 					</div>
@@ -172,10 +76,10 @@
 			</div>
 			<div class="col-md-7 py-3 py-md-5 ftco-animate">
 				<div class="text text-2 py-md-5">
-					<h2 class="mb-4">Rent your stuff</h2>
-					<p>Rent your products on our platform at the comfort of your home</p>
+					<h2 class="mb-4">Buy whatever you need</h2>
+					<p>At the comfort of your home</p>
 					{% if request.user.is_authenticated %}
-					<p><a href="{% url 'mainapp:product-create' %}" class="btn btn-white px-4 py-3">Rent something now</a></p>
+					<p><a href="{% url 'mainapp:product-create' %}" class="btn btn-primary px-4 py-3">Let's get you shopping</a></p>
 					{% endif %}
 				</div>
 			</div>

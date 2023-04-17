@@ -14,15 +14,10 @@
 				<h3>{{product.name}}</h3>
 				<div class="rating d-flex">
 
-					<p class="text-left mr-4">Offered by {{product.owner}}</p>
+					<p class="text-left mr-4">Offered by {{product.owner.first_name}} {{product.owner.last_name}}</p>
 
 				</div>
-				<p class="price" style="color:black;"><span>US ${{product.price}}</span> <b>&nbsp;per</b>
-					{% if product.rent_duration == "One Day" %} <b style="color:green;">Day</b>
-					{% elif product.rent_duration == "One Week" %} <b style="color:blue;">Week</b>
-					{% elif product.rent_duration == "One Month" %} <b style="color:red;">Month</b>
-					{% endif %}
-				</p>
+				<p class="price" style="color:black;"><span>US ${{product.price}}</span></p>
 				<h4>Description</h4>
 				<p>{{product.description}}</p>
 
@@ -61,11 +56,7 @@
 						<h3><a href="{{ rela.get_absolute_url }}">{{rela.name}}</a></h3>
 						<div class="d-flex">
 							<div class="pricing">
-								<p class="price"><span class="price-sale">US ${{rela.price}} </span> <b>&nbsp;per</b>
-									{% if product.rent_duration == "One Day" %} <b style="color:green;">Day</b>
-									{% elif product.rent_duration == "One Week" %} <b style="color:blue;">Week</b>
-									{% elif product.rent_duration == "One Month" %} <b style="color:red;">Month</b>
-									{% endif %}</p>
+								<p class="price"><span class="price-sale">US ${{rela.price}} </span></p>
 							</div>
 
 						</div>
