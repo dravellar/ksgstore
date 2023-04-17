@@ -47,8 +47,7 @@ class OrderItemTestCase(TestCase):
         OrderItem.objects.create(
             order=Order.objects.get(id=1),
             product = Product.objects.get(id=1),
-            price = 49.99,
-            quantity = 1 
+            price = 49.99
         )
 
     def test_model(self):
